@@ -1,0 +1,26 @@
+name: Build CustomProfile
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'CustomProfile-Source.zip'
+      - '.github/workflows/build.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - run: mkdir project && unzip CustomProfile-Source.zip -d project
+      - run: mvn --batch-mode clean package
+        working-directory: project
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CustomProfile-Paper-26.2
+          path: project/target/CustomProfile-1.0.0.jar
